@@ -1,33 +1,14 @@
 import { useEffect, useState, useMemo } from "react";
+import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Loader2, Search, Filter, ChevronDown } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuCheckboxItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ChevronDown, Eye } from "lucide-react";
 
 interface FilterState {
   broadFieldId?: number;
@@ -40,608 +21,440 @@ interface FilterState {
 }
 
 export default function Home() {
+  const [, navigate] = useLocation();
   const [filters, setFilters] = useState<FilterState>({});
   const [page, setPage] = useState(0);
-  const PAGE_SIZE = 50;
+  const pageSize = 20;
 
-  // Fetch ISCED-F data
-  const { data: broadFields } = trpc.isced.broadFields.useQuery();
-  const { data: narrowFields } = trpc.isced.narrowFields.useQuery(
-    { broadFieldId: filters.broadFieldId || 0 },
+  // 获取ISCED-F分类数据
+  const { data: broadFields = [] } = trpc.isced.broadFields.useQuery();
+  const { data: narrowFields = [] } = trpc.isced.narrowFields.useQuery(
+    filters.broadFieldId ? { broadFieldId: filters.broadFieldId } : { broadFieldId: 0 },
     { enabled: !!filters.broadFieldId }
   );
-  const { data: detailedFields } = trpc.isced.detailedFields.useQuery(
-    { narrowFieldId: filters.narrowFieldId || 0 },
+  const { data: detailedFields = [] } = trpc.isced.detailedFields.useQuery(
+    filters.narrowFieldId ? { narrowFieldId: filters.narrowFieldId } : { narrowFieldId: 0 },
     { enabled: !!filters.narrowFieldId }
   );
 
-  // Fetch countries and cities
-  const { data: countries } = trpc.countries.list.useQuery();
-  const { data: cities } = trpc.cities.byCountry.useQuery(
-    { countryId: filters.countryId || 0 },
+  // 获取国家和城市数据
+  const { data: countries = [] } = trpc.countries.list.useQuery();
+  const { data: cities = [] } = trpc.cities.byCountry.useQuery(
+    filters.countryId ? { countryId: filters.countryId } : { countryId: 0 },
     { enabled: !!filters.countryId }
   );
 
-  // Fetch programs with current filters
-  const programFilters = useMemo(() => {
-    const filterIds: any = {
-      limit: PAGE_SIZE,
-      offset: page * PAGE_SIZE,
-    };
+  // 获取专业数据
+  const { data: programs = [], isLoading } = trpc.programs.search.useQuery(
+    {
+      limit: pageSize,
+      offset: page * pageSize,
+      iscedDetailedFieldIds: filters.detailedFieldId ? [filters.detailedFieldId] : [],
+      cityIds: filters.cityId ? [filters.cityId] : [],
+      degreeTypes: filters.degreeType ? [filters.degreeType] : [],
+      universityTypes: filters.universityType ? [filters.universityType] : [],
+    },
+    { refetchOnWindowFocus: false }
+  );
 
-    if (filters.detailedFieldId) {
-      filterIds.iscedDetailedFieldIds = [filters.detailedFieldId];
-    }
-    if (filters.cityId) {
-      filterIds.cityIds = [filters.cityId];
-    }
-    if (filters.degreeType) {
-      filterIds.degreeTypes = [filters.degreeType];
-    }
-    if (filters.universityType) {
-      filterIds.universityTypes = [filters.universityType];
-    }
+  const degreeTypes = ["bachelor", "master", "phd"];
+  const universityTypes = ["public", "private"];
 
-    return filterIds;
-  }, [filters, page]);
-
-  const { data: programs, isLoading: programsLoading } =
-    trpc.programs.search.useQuery(programFilters);
-
-  // Handle filter changes
-  const handleBroadFieldChange = (value: string) => {
-    const id = parseInt(value);
-    setFilters({
-      ...filters,
-      broadFieldId: id,
-      narrowFieldId: undefined,
-      detailedFieldId: undefined,
-    });
-    setPage(0);
-  };
-
-  const handleNarrowFieldChange = (value: string) => {
-    const id = parseInt(value);
-    setFilters({
-      ...filters,
-      narrowFieldId: id,
-      detailedFieldId: undefined,
-    });
-    setPage(0);
-  };
-
-  const handleDetailedFieldChange = (value: string) => {
-    const id = parseInt(value);
-    setFilters({ ...filters, detailedFieldId: id });
-    setPage(0);
-  };
-
-  const handleCountryChange = (value: string) => {
-    const id = parseInt(value);
-    setFilters({ ...filters, countryId: id, cityId: undefined });
-    setPage(0);
-  };
-
-  const handleCityChange = (value: string) => {
-    const id = parseInt(value);
-    setFilters({ ...filters, cityId: id });
-    setPage(0);
-  };
-
-  const handleDegreeChange = (value: string) => {
-    setFilters({ ...filters, degreeType: value });
-    setPage(0);
-  };
-
-  const handleUniversityTypeChange = (value: string) => {
-    setFilters({ ...filters, universityType: value });
-    setPage(0);
-  };
-
-  const clearFilters = () => {
+  const handleClearFilters = () => {
     setFilters({});
     setPage(0);
   };
 
-  const degreeTypes = ["bachelor", "master", "phd", "foundation", "diploma"];
-  const universityTypes = ["public", "private"];
-
-  // Get display names for current filters
-  const getBroadFieldName = () => {
-    if (!filters.broadFieldId) return "所有领域";
-    return broadFields?.find((f) => f.id === filters.broadFieldId)?.nameCn || "选择";
+  const handleViewDetails = (programId: number) => {
+    navigate(`/program/${programId}`);
   };
-
-  const getNarrowFieldName = () => {
-    if (!filters.narrowFieldId) return "所有领域";
-    return narrowFields?.find((f) => f.id === filters.narrowFieldId)?.nameCn || "选择";
-  };
-
-  const getDetailedFieldName = () => {
-    if (!filters.detailedFieldId) return "所有领域";
-    return detailedFields?.find((f) => f.id === filters.detailedFieldId)?.nameCn || "选择";
-  };
-
-  const getCountryName = () => {
-    if (!filters.countryId) return "所有国家";
-    const country = countries?.find((c) => c.id === filters.countryId);
-    return country ? `${country.nameCn}` : "选择";
-  };
-
-  const getCityName = () => {
-    if (!filters.cityId) return "所有城市";
-    return cities?.find((c) => c.id === filters.cityId)?.nameCn || "选择";
-  };
-
-  const getDegreeName = () => {
-    if (!filters.degreeType) return "所有学位";
-    const names: any = {
-      bachelor: "学士",
-      master: "硕士",
-      phd: "博士",
-      foundation: "预科",
-      diploma: "文凭",
-    };
-    return names[filters.degreeType] || "选择";
-  };
-
-  const getUniversityTypeName = () => {
-    if (!filters.universityType) return "所有类型";
-    return filters.universityType === "public" ? "公立" : "私立";
-  };
-
-  const hasActiveFilters = Object.values(filters).some((v) => v !== undefined);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-slate-900 mb-1">
-            欧洲院校专业信息平台
-          </h1>
-          <p className="text-base text-slate-600">
-            European Universities Professional Database
-          </p>
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <h1 className="text-4xl font-bold text-gray-900">欧洲院校专业信息平台</h1>
+          <p className="text-gray-600 mt-2">European Universities Professional Database</p>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        {/* Table with Header Filters */}
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Filter className="w-5 h-5" />
-                  专业列表 | Programs
-                </CardTitle>
-                <CardDescription className="mt-2">
-                  {programsLoading ? (
-                    <span className="flex items-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      加载中...
-                    </span>
-                  ) : (
-                    `共 ${programs?.length || 0} 条结果 ${
-                      hasActiveFilters ? "| 已应用筛选" : ""
-                    }`
-                  )}
-                </CardDescription>
-              </div>
-              {hasActiveFilters && (
-                <Button
-                  onClick={clearFilters}
-                  variant="outline"
-                  size="sm"
-                >
-                  清除所有筛选
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Filter Bar */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">筛选条件 | Filters</h2>
+            <Button variant="outline" size="sm" onClick={handleClearFilters}>
+              清除所有筛选 | Clear All
+            </Button>
+          </div>
+
+          {/* Filter Controls */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Broad Field Filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="justify-between">
+                  <span>
+                    {filters.broadFieldId
+                      ? broadFields.find((f: any) => f.id === filters.broadFieldId)?.nameCn
+                      : "宽泛领域 | Broad Field"}
+                  </span>
+                  <ChevronDown className="w-4 h-4" />
                 </Button>
-              )}
-            </div>
-          </CardHeader>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setFilters({ ...filters, broadFieldId: undefined, narrowFieldId: undefined, detailedFieldId: undefined });
+                    setPage(0);
+                  }}
+                >
+                  全部 | All
+                </DropdownMenuItem>
+                {broadFields.map((field: any) => (
+                  <DropdownMenuItem
+                    key={field.id}
+                    onClick={() => {
+                      setFilters({ ...filters, broadFieldId: field.id, narrowFieldId: undefined, detailedFieldId: undefined });
+                      setPage(0);
+                    }}
+                  >
+                    {field.nameCn} ({field.code})
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          <CardContent>
+            {/* Narrow Field Filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="justify-between" disabled={!filters.broadFieldId}>
+                  <span>
+                    {filters.narrowFieldId
+                      ? narrowFields.find((f: any) => f.id === filters.narrowFieldId)?.nameCn
+                      : "狭义领域 | Narrow Field"}
+                  </span>
+                  <ChevronDown className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setFilters({ ...filters, narrowFieldId: undefined, detailedFieldId: undefined });
+                    setPage(0);
+                  }}
+                >
+                  全部 | All
+                </DropdownMenuItem>
+                {narrowFields.map((field: any) => (
+                  <DropdownMenuItem
+                    key={field.id}
+                    onClick={() => {
+                      setFilters({ ...filters, narrowFieldId: field.id, detailedFieldId: undefined });
+                      setPage(0);
+                    }}
+                  >
+                    {field.nameCn} ({field.code})
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Detailed Field Filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="justify-between" disabled={!filters.narrowFieldId}>
+                  <span>
+                    {filters.detailedFieldId
+                      ? detailedFields.find((f: any) => f.id === filters.detailedFieldId)?.nameCn
+                      : "详细领域 | Detailed Field"}
+                  </span>
+                  <ChevronDown className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setFilters({ ...filters, detailedFieldId: undefined });
+                    setPage(0);
+                  }}
+                >
+                  全部 | All
+                </DropdownMenuItem>
+                {detailedFields.map((field: any) => (
+                  <DropdownMenuItem
+                    key={field.id}
+                    onClick={() => {
+                      setFilters({ ...filters, detailedFieldId: field.id });
+                      setPage(0);
+                    }}
+                  >
+                    {field.nameCn} ({field.code})
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Country Filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="justify-between">
+                  <span>
+                    {filters.countryId
+                      ? countries.find((c: any) => c.id === filters.countryId)?.nameCn
+                      : "国家 | Country"}
+                  </span>
+                  <ChevronDown className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setFilters({ ...filters, countryId: undefined, cityId: undefined });
+                    setPage(0);
+                  }}
+                >
+                  全部 | All
+                </DropdownMenuItem>
+                {countries.map((country: any) => (
+                  <DropdownMenuItem
+                    key={country.id}
+                    onClick={() => {
+                      setFilters({ ...filters, countryId: country.id, cityId: undefined });
+                      setPage(0);
+                    }}
+                  >
+                    {country.nameCn} {country.isEU ? "🇪🇺" : ""} {country.isSchengen ? "🔵" : ""}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* City Filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="justify-between" disabled={!filters.countryId}>
+                  <span>
+                    {filters.cityId
+                      ? cities.find((c: any) => c.id === filters.cityId)?.nameCn
+                      : "城市 | City"}
+                  </span>
+                  <ChevronDown className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setFilters({ ...filters, cityId: undefined });
+                    setPage(0);
+                  }}
+                >
+                  全部 | All
+                </DropdownMenuItem>
+                {cities.map((city: any) => (
+                  <DropdownMenuItem
+                    key={city.id}
+                    onClick={() => {
+                      setFilters({ ...filters, cityId: city.id });
+                      setPage(0);
+                    }}
+                  >
+                    {city.nameCn}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Degree Type Filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="justify-between">
+                  <span>
+                    {filters.degreeType
+                      ? {
+                          bachelor: "学士 | Bachelor",
+                          master: "硕士 | Master",
+                          phd: "博士 | PhD",
+                        }[filters.degreeType]
+                      : "学位 | Degree"}
+                  </span>
+                  <ChevronDown className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setFilters({ ...filters, degreeType: undefined });
+                    setPage(0);
+                  }}
+                >
+                  全部 | All
+                </DropdownMenuItem>
+                {degreeTypes.map((type) => (
+                  <DropdownMenuItem
+                    key={type}
+                    onClick={() => {
+                      setFilters({ ...filters, degreeType: type });
+                      setPage(0);
+                    }}
+                  >
+                    {type === "bachelor" && "学士 | Bachelor"}
+                    {type === "master" && "硕士 | Master"}
+                    {type === "phd" && "博士 | PhD"}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* University Type Filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="justify-between">
+                  <span>
+                    {filters.universityType
+                      ? filters.universityType === "public"
+                        ? "公立 | Public"
+                        : "私立 | Private"
+                      : "大学类型 | Type"}
+                  </span>
+                  <ChevronDown className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setFilters({ ...filters, universityType: undefined });
+                    setPage(0);
+                  }}
+                >
+                  全部 | All
+                </DropdownMenuItem>
+                {universityTypes.map((type) => (
+                  <DropdownMenuItem
+                    key={type}
+                    onClick={() => {
+                      setFilters({ ...filters, universityType: type });
+                      setPage(0);
+                    }}
+                  >
+                    {type === "public" ? "公立 | Public" : "私立 | Private"}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        {/* Results */}
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">
+              专业列表 | Programs ({programs.length} 结果 | Results)
+            </h2>
+          </div>
+
+          {isLoading ? (
+            <div className="p-8 text-center text-gray-500">加载中... | Loading...</div>
+          ) : programs.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">
+              未找到匹配的专业 | No programs found
+            </div>
+          ) : (
             <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-slate-50">
-                    {/* Broad Field */}
-                    <TableHead className="min-w-[120px]">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-full justify-between"
-                          >
-                            <span className="truncate">
-                              宽泛领域 | {getBroadFieldName()}
-                            </span>
-                            <ChevronDown className="w-4 h-4 ml-2" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="w-56">
-                          <DropdownMenuLabel>宽泛领域 | Broad Field</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuCheckboxItem
-                            checked={!filters.broadFieldId}
-                            onCheckedChange={() =>
-                              setFilters({
-                                ...filters,
-                                broadFieldId: undefined,
-                                narrowFieldId: undefined,
-                                detailedFieldId: undefined,
-                              })
-                            }
-                          >
-                            所有领域
-                          </DropdownMenuCheckboxItem>
-                          {broadFields?.map((field) => (
-                            <DropdownMenuCheckboxItem
-                              key={field.id}
-                              checked={filters.broadFieldId === field.id}
-                              onCheckedChange={() =>
-                                handleBroadFieldChange(field.id.toString())
-                              }
-                            >
-                              {field.code} - {field.nameCn}
-                            </DropdownMenuCheckboxItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableHead>
-
-                    {/* Narrow Field */}
-                    <TableHead className="min-w-[120px]">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-full justify-between"
-                            disabled={!filters.broadFieldId}
-                          >
-                            <span className="truncate">
-                              狭义领域 | {getNarrowFieldName()}
-                            </span>
-                            <ChevronDown className="w-4 h-4 ml-2" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="w-56">
-                          <DropdownMenuLabel>狭义领域 | Narrow Field</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuCheckboxItem
-                            checked={!filters.narrowFieldId}
-                            onCheckedChange={() =>
-                              setFilters({
-                                ...filters,
-                                narrowFieldId: undefined,
-                                detailedFieldId: undefined,
-                              })
-                            }
-                          >
-                            所有领域
-                          </DropdownMenuCheckboxItem>
-                          {narrowFields?.map((field) => (
-                            <DropdownMenuCheckboxItem
-                              key={field.id}
-                              checked={filters.narrowFieldId === field.id}
-                              onCheckedChange={() =>
-                                handleNarrowFieldChange(field.id.toString())
-                              }
-                            >
-                              {field.code} - {field.nameCn}
-                            </DropdownMenuCheckboxItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableHead>
-
-                    {/* Detailed Field */}
-                    <TableHead className="min-w-[120px]">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-full justify-between"
-                            disabled={!filters.narrowFieldId}
-                          >
-                            <span className="truncate">
-                              详细领域 | {getDetailedFieldName()}
-                            </span>
-                            <ChevronDown className="w-4 h-4 ml-2" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="w-56">
-                          <DropdownMenuLabel>详细领域 | Detailed Field</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuCheckboxItem
-                            checked={!filters.detailedFieldId}
-                            onCheckedChange={() =>
-                              setFilters({ ...filters, detailedFieldId: undefined })
-                            }
-                          >
-                            所有领域
-                          </DropdownMenuCheckboxItem>
-                          {detailedFields?.map((field) => (
-                            <DropdownMenuCheckboxItem
-                              key={field.id}
-                              checked={filters.detailedFieldId === field.id}
-                              onCheckedChange={() =>
-                                handleDetailedFieldChange(field.id.toString())
-                              }
-                            >
-                              {field.code} - {field.nameCn}
-                            </DropdownMenuCheckboxItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableHead>
-
-                    {/* Country */}
-                    <TableHead className="min-w-[100px]">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-full justify-between"
-                          >
-                            <span className="truncate">
-                              国家 | {getCountryName()}
-                            </span>
-                            <ChevronDown className="w-4 h-4 ml-2" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="w-56">
-                          <DropdownMenuLabel>国家 | Country</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuCheckboxItem
-                            checked={!filters.countryId}
-                            onCheckedChange={() =>
-                              setFilters({
-                                ...filters,
-                                countryId: undefined,
-                                cityId: undefined,
-                              })
-                            }
-                          >
-                            所有国家
-                          </DropdownMenuCheckboxItem>
-                          {countries?.map((country) => (
-                            <DropdownMenuCheckboxItem
-                              key={country.id}
-                              checked={filters.countryId === country.id}
-                              onCheckedChange={() =>
-                                handleCountryChange(country.id.toString())
-                              }
-                            >
-                              {country.nameCn} {!country.isEU && "🌍"}
-                              {country.isSchengen && "🔵"}
-                            </DropdownMenuCheckboxItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableHead>
-
-                    {/* City */}
-                    <TableHead className="min-w-[100px]">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-full justify-between"
-                            disabled={!filters.countryId}
-                          >
-                            <span className="truncate">
-                              城市 | {getCityName()}
-                            </span>
-                            <ChevronDown className="w-4 h-4 ml-2" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="w-56">
-                          <DropdownMenuLabel>城市 | City</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuCheckboxItem
-                            checked={!filters.cityId}
-                            onCheckedChange={() =>
-                              setFilters({ ...filters, cityId: undefined })
-                            }
-                          >
-                            所有城市
-                          </DropdownMenuCheckboxItem>
-                          {cities?.map((city) => (
-                            <DropdownMenuCheckboxItem
-                              key={city.id}
-                              checked={filters.cityId === city.id}
-                              onCheckedChange={() =>
-                                handleCityChange(city.id.toString())
-                              }
-                            >
-                              {city.nameCn}
-                            </DropdownMenuCheckboxItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableHead>
-
-                    {/* Degree Type */}
-                    <TableHead className="min-w-[100px]">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-full justify-between"
-                          >
-                            <span className="truncate">
-                              学位 | {getDegreeName()}
-                            </span>
-                            <ChevronDown className="w-4 h-4 ml-2" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="w-56">
-                          <DropdownMenuLabel>学位类型 | Degree Type</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuCheckboxItem
-                            checked={!filters.degreeType}
-                            onCheckedChange={() =>
-                              setFilters({ ...filters, degreeType: undefined })
-                            }
-                          >
-                            所有学位
-                          </DropdownMenuCheckboxItem>
-                          {degreeTypes.map((type) => (
-                            <DropdownMenuCheckboxItem
-                              key={type}
-                              checked={filters.degreeType === type}
-                              onCheckedChange={() => handleDegreeChange(type)}
-                            >
-                              {type === "bachelor" && "学士学位"}
-                              {type === "master" && "硕士学位"}
-                              {type === "phd" && "博士学位"}
-                              {type === "foundation" && "预科课程"}
-                              {type === "diploma" && "文凭课程"}
-                            </DropdownMenuCheckboxItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableHead>
-
-                    {/* University Type */}
-                    <TableHead className="min-w-[100px]">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-full justify-between"
-                          >
-                            <span className="truncate">
-                              类型 | {getUniversityTypeName()}
-                            </span>
-                            <ChevronDown className="w-4 h-4 ml-2" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="w-56">
-                          <DropdownMenuLabel>大学类型 | University Type</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuCheckboxItem
-                            checked={!filters.universityType}
-                            onCheckedChange={() =>
-                              setFilters({ ...filters, universityType: undefined })
-                            }
-                          >
-                            所有类型
-                          </DropdownMenuCheckboxItem>
-                          {universityTypes.map((type) => (
-                            <DropdownMenuCheckboxItem
-                              key={type}
-                              checked={filters.universityType === type}
-                              onCheckedChange={() =>
-                                handleUniversityTypeChange(type)
-                              }
-                            >
-                              {type === "public" ? "公立大学" : "私立大学"}
-                            </DropdownMenuCheckboxItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableHead>
-
-                    {/* Program Name */}
-                    <TableHead className="min-w-[200px]">专业名 | Program Name</TableHead>
-
-                    {/* School Name */}
-                    <TableHead className="min-w-[150px]">学校 | School</TableHead>
-
-                    {/* Duration */}
-                    <TableHead className="min-w-[80px]">学制 | Duration</TableHead>
-
-                    {/* Language */}
-                    <TableHead className="min-w-[100px]">语言 | Language</TableHead>
-
-                    {/* Action */}
-                    <TableHead className="min-w-[80px]">操作 | Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-
-                <TableBody>
-                  {programsLoading ? (
-                    <TableRow>
-                      <TableCell colSpan={12} className="text-center py-8">
-                        <Loader2 className="w-6 h-6 animate-spin mx-auto" />
-                      </TableCell>
-                    </TableRow>
-                  ) : programs && programs.length > 0 ? (
-                    programs.map((program: any) => (
-                      <TableRow key={program.id} className="hover:bg-slate-50">
-                        <TableCell className="text-xs text-slate-600">
-                          {program.iscedDetailedFieldId}
-                        </TableCell>
-                        <TableCell className="text-xs text-slate-600">
-                          {program.cityId}
-                        </TableCell>
-                        <TableCell className="text-xs text-slate-600">
-                          {program.iscedDetailedFieldId}
-                        </TableCell>
-                        <TableCell className="text-xs text-slate-600">
-                          {program.countryId}
-                        </TableCell>
-                        <TableCell className="text-xs text-slate-600">
-                          {program.cityId}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="text-xs">
-                            {program.degreeType}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="secondary" className="text-xs">
-                            {program.universityType === "public"
-                              ? "公立"
-                              : "私立"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="font-semibold">
-                          {program.nameEn}
-                        </TableCell>
-                        <TableCell className="text-sm text-slate-600">
-                          学校 {program.universityId}
-                        </TableCell>
-                        <TableCell className="text-sm">
-                          {program.durationMonths}M
-                        </TableCell>
-                        <TableCell className="text-xs">
-                          {program.teachingLanguage
-                            ? JSON.parse(program.teachingLanguage).join(", ")
-                            : "N/A"}
-                        </TableCell>
-                        <TableCell>
-                          <Button size="sm" variant="outline">
-                            详情 →
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={12} className="text-center py-8">
-                        <p className="text-slate-600">
-                          未找到匹配的专业 | No programs found
-                        </p>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                      专业名称 | Program Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                      学校 | University
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                      国家 | Country
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                      城市 | City
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                      学位 | Degree
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                      学费 | Tuition
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                      操作 | Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {programs.map((program: any) => (
+                    <tr key={program.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 text-sm text-gray-900 font-medium">
+                        {program.nameCn}
+                        <br />
+                        <span className="text-gray-600">{program.nameEn}</span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {program.universityName}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {program.countryName}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {program.cityName}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {program.degreeType === "bachelor" && "学士 | Bachelor"}
+                        {program.degreeType === "master" && "硕士 | Master"}
+                        {program.degreeType === "phd" && "博士 | PhD"}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {program.tuition || "详见详情"}
+                      </td>
+                      <td className="px-6 py-4 text-sm">
+                        <Button
+                          size="sm"
+                          variant="default"
+                          onClick={() => handleViewDetails(program.id)}
+                          className="flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          查看详情 | View Details
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </CardContent>
-        </Card>
+          )}
+
+          {/* Pagination */}
+          {programs.length > 0 && (
+            <div className="p-6 border-t border-gray-200 flex items-center justify-between">
+              <Button
+                variant="outline"
+                onClick={() => setPage(Math.max(0, page - 1))}
+                disabled={page === 0}
+              >
+                上一页 | Previous
+              </Button>
+              <span className="text-sm text-gray-600">
+                第 {page + 1} 页 | Page {page + 1}
+              </span>
+              <Button
+                variant="outline"
+                onClick={() => setPage(page + 1)}
+                disabled={programs.length < pageSize}
+              >
+                下一页 | Next
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
