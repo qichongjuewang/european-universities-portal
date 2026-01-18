@@ -12,7 +12,7 @@ export default function ProgramDetail() {
   if (!match) return null;
 
   const programId = parseInt(params?.id || "0");
-  const { data: program, isLoading } = trpc.programs.byId.useQuery(
+  const { data: program, isLoading, error } = trpc.programs.detail.useQuery(
     { id: programId },
     { enabled: !!programId }
   );
@@ -26,6 +26,18 @@ export default function ProgramDetail() {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardContent className="py-12">
+            <p className="text-center text-red-600">加载失败 | Error loading program: {error.message}</p>
+          </CardContent>
+        </Card>
       </div>
     );
   }

@@ -45,7 +45,7 @@ export default function Home() {
   );
 
   // 获取专业数据
-  const { data: programs = [], isLoading } = trpc.programs.search.useQuery(
+  const { data: programs = [], isLoading } = trpc.programs.list.useQuery(
     {
       limit: pageSize,
       offset: page * pageSize,
@@ -73,9 +73,14 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-4xl font-bold text-gray-900">欧洲院校专业信息平台</h1>
-          <p className="text-gray-600 mt-2">European Universities Professional Database</p>
+        <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900">欧洲院校专业信息平台</h1>
+            <p className="text-gray-600 mt-2">European Universities Professional Database</p>
+          </div>
+          <Button variant="outline" onClick={() => navigate('/logs')}>
+            查看日志 | View Logs
+          </Button>
         </div>
       </div>
 
