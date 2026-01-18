@@ -1,0 +1,9 @@
+{
+  "query": "INSERT IGNORE INTO countries (code, nameEn, nameCn, isEU, isSchengen) VALUES \n('GB', 'United Kingdom', '英国', 0, 1),\n('CH', 'Switzerland', '瑞士', 0, 1),\n('FR', 'France', '法国', 1, 1),\n('DE', 'Germany', '德国', 1, 1),\n('NL', 'Netherlands', '荷兰', 1, 1),\n('SE', 'Sweden', '瑞典', 1, 1),\n('BE', 'Belgium', '比利时', 1, 1),\n('IE', 'Ireland', '爱尔兰', 1, 0),\n('AT', 'Austria', '奥地利', 1, 1),\n('ES', 'Spain', '西班牙', 1, 1),\n('IT', 'Italy', '意大利', 1, 1),\n('PL', 'Poland', '波兰', 1, 1),\n('CZ', 'Czech Republic', '捷克', 1, 1),\n('DK', 'Denmark', '丹麦', 1, 1),\n('FI', 'Finland', '芬兰', 1, 1),\n('GR', 'Greece', '希腊', 1, 1),\n('HU', 'Hungary', '匈牙利', 1, 1),\n('PT', 'Portugal', '葡萄牙', 1, 1),\n('RO', 'Romania', '罗马尼亚', 1, 1),\n('NO', 'Norway', '挪威', 0, 1);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user RiEPScXNbyHT7NE.root --database kfbZCXQxSRhA8uTcZTmQUM --execute INSERT IGNORE INTO countries (code, nameEn, nameCn, isEU, isSchengen) VALUES \n('GB', 'United Kingdom', '英国', 0, 1),\n('CH', 'Switzerland', '瑞士', 0, 1),\n('FR', 'France', '法国', 1, 1),\n('DE', 'Germany', '德国', 1, 1),\n('NL', 'Netherlands', '荷兰', 1, 1),\n('SE', 'Sweden', '瑞典', 1, 1),\n('BE', 'Belgium', '比利时', 1, 1),\n('IE', 'Ireland', '爱尔兰', 1, 0),\n('AT', 'Austria', '奥地利', 1, 1),\n('ES', 'Spain', '西班牙', 1, 1),\n('IT', 'Italy', '意大利', 1, 1),\n('PL', 'Poland', '波兰', 1, 1),\n('CZ', 'Czech Republic', '捷克', 1, 1),\n('DK', 'Denmark', '丹麦', 1, 1),\n('FI', 'Finland', '芬兰', 1, 1),\n('GR', 'Greece', '希腊', 1, 1),\n('HU', 'Hungary', '匈牙利', 1, 1),\n('PT', 'Portugal', '葡萄牙', 1, 1),\n('RO', 'Romania', '罗马尼亚', 1, 1),\n('NO', 'Norway', '挪威', 0, 1);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1508
+}

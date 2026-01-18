@@ -1,0 +1,8 @@
+{
+  "query": "INSERT IGNORE INTO countries (name, code, is_eu, is_schengen) VALUES \n('United Kingdom', 'GB', 0, 1),\n('Switzerland', 'CH', 0, 1),\n('France', 'FR', 1, 1),\n('Germany', 'DE', 1, 1),\n('Netherlands', 'NL', 1, 1),\n('Sweden', 'SE', 1, 1),\n('Belgium', 'BE', 1, 1),\n('Ireland', 'IE', 1, 0),\n('Austria', 'AT', 1, 1),\n('Spain', 'ES', 1, 1),\n('Italy', 'IT', 1, 1),\n('Poland', 'PL', 1, 1),\n('Czech Republic', 'CZ', 1, 1),\n('Denmark', 'DK', 1, 1),\n('Finland', 'FI', 1, 1),\n('Greece', 'GR', 1, 1),\n('Hungary', 'HU', 1, 1),\n('Portugal', 'PT', 1, 1),\n('Romania', 'RO', 1, 1),\n('Norway', 'NO', 0, 1);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user RiEPScXNbyHT7NE.root --database kfbZCXQxSRhA8uTcZTmQUM --execute INSERT IGNORE INTO countries (name, code, is_eu, is_schengen) VALUES \n('United Kingdom', 'GB', 0, 1),\n('Switzerland', 'CH', 0, 1),\n('France', 'FR', 1, 1),\n('Germany', 'DE', 1, 1),\n('Netherlands', 'NL', 1, 1),\n('Sweden', 'SE', 1, 1),\n('Belgium', 'BE', 1, 1),\n('Ireland', 'IE', 1, 0),\n('Austria', 'AT', 1, 1),\n('Spain', 'ES', 1, 1),\n('Italy', 'IT', 1, 1),\n('Poland', 'PL', 1, 1),\n('Czech Republic', 'CZ', 1, 1),\n('Denmark', 'DK', 1, 1),\n('Finland', 'FI', 1, 1),\n('Greece', 'GR', 1, 1),\n('Hungary', 'HU', 1, 1),\n('Portugal', 'PT', 1, 1),\n('Romania', 'RO', 1, 1),\n('Norway', 'NO', 0, 1);",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'name' in 'field list'"
+  ]
+}

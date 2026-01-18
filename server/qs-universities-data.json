@@ -1,0 +1,302 @@
+[
+  {
+    "rank": 1,
+    "name": "ETH Zurich",
+    "country": "Switzerland",
+    "city": "Zürich",
+    "score": 100,
+    "academicReputation": 100,
+    "citationsPerPaper": 98.9,
+    "papersPerFaculty": 84.9
+  },
+  {
+    "rank": 2,
+    "name": "Imperial College London",
+    "country": "United Kingdom",
+    "city": "London",
+    "score": 99.5,
+    "academicReputation": 100,
+    "citationsPerPaper": 99.6,
+    "papersPerFaculty": 72.7
+  },
+  {
+    "rank": 3,
+    "name": "University of Oxford",
+    "country": "United Kingdom",
+    "city": "Oxford",
+    "score": 99,
+    "academicReputation": 100,
+    "citationsPerPaper": 98.3,
+    "papersPerFaculty": 66.3
+  },
+  {
+    "rank": 4,
+    "name": "University of Cambridge",
+    "country": "United Kingdom",
+    "city": "Cambridge",
+    "score": 97.8,
+    "academicReputation": 100,
+    "citationsPerPaper": 98.9,
+    "papersPerFaculty": 64.5
+  },
+  {
+    "rank": 5,
+    "name": "UCL",
+    "country": "United Kingdom",
+    "city": "London",
+    "score": 97.2,
+    "academicReputation": 100,
+    "citationsPerPaper": 99.2,
+    "papersPerFaculty": 52.1
+  },
+  {
+    "rank": 6,
+    "name": "The University of Edinburgh",
+    "country": "United Kingdom",
+    "city": "Edinburgh",
+    "score": 96.1,
+    "academicReputation": 100,
+    "citationsPerPaper": 93.8,
+    "papersPerFaculty": 42.2
+  },
+  {
+    "rank": 7,
+    "name": "The University of Manchester",
+    "country": "United Kingdom",
+    "city": "Manchester",
+    "score": 95.7,
+    "academicReputation": 99.8,
+    "citationsPerPaper": 93.4,
+    "papersPerFaculty": 40.6
+  },
+  {
+    "rank": 8,
+    "name": "King's College London",
+    "country": "United Kingdom",
+    "city": "London",
+    "score": 94.9,
+    "academicReputation": 99.2,
+    "citationsPerPaper": 93.6,
+    "papersPerFaculty": 46.8
+  },
+  {
+    "rank": 9,
+    "name": "Université PSL",
+    "country": "France",
+    "city": "Paris",
+    "score": 93.4,
+    "academicReputation": 94.4,
+    "citationsPerPaper": 66.6,
+    "papersPerFaculty": 82.2
+  },
+  {
+    "rank": 10,
+    "name": "EPFL – École polytechnique fédérale de Lausanne",
+    "country": "Switzerland",
+    "city": "Lausanne",
+    "score": 93,
+    "academicReputation": 97.8,
+    "citationsPerPaper": 99,
+    "papersPerFaculty": 74.4
+  },
+  {
+    "rank": 11,
+    "name": "Technical University of Munich",
+    "country": "Germany",
+    "city": "Munich",
+    "score": 92.1,
+    "academicReputation": 97.5,
+    "citationsPerPaper": 71.5,
+    "papersPerFaculty": 91
+  },
+  {
+    "rank": 12,
+    "name": "The London School of Economics and Political Science (LSE)",
+    "country": "United Kingdom",
+    "city": "London",
+    "score": 91,
+    "academicReputation": 90.7,
+    "citationsPerPaper": 89.9,
+    "papersPerFaculty": 61.9
+  },
+  {
+    "rank": 13,
+    "name": "Lund University",
+    "country": "Sweden",
+    "city": "Lund",
+    "score": 90.4,
+    "academicReputation": 91.4,
+    "citationsPerPaper": 72.8,
+    "papersPerFaculty": 49.5
+  },
+  {
+    "rank": 14,
+    "name": "University of Bristol",
+    "country": "United Kingdom",
+    "city": "Bristol",
+    "score": 89.7,
+    "academicReputation": 95,
+    "citationsPerPaper": 95.2,
+    "papersPerFaculty": 65
+  },
+  {
+    "rank": 15,
+    "name": "Delft University of Technology",
+    "country": "Netherlands",
+    "city": "Delft",
+    "score": 89.1,
+    "academicReputation": 94.5,
+    "citationsPerPaper": 66.2,
+    "papersPerFaculty": 81.6
+  },
+  {
+    "rank": 16,
+    "name": "University of Glasgow",
+    "country": "United Kingdom",
+    "city": "Glasgow",
+    "score": 88.5,
+    "academicReputation": 95.6,
+    "citationsPerPaper": 89.4,
+    "papersPerFaculty": 33
+  },
+  {
+    "rank": 17,
+    "name": "University of Amsterdam",
+    "country": "Netherlands",
+    "city": "Amsterdam",
+    "score": 87.2,
+    "academicReputation": 97.7,
+    "citationsPerPaper": 98.1,
+    "papersPerFaculty": 67.9
+  },
+  {
+    "rank": 18,
+    "name": "Universität Heidelberg",
+    "country": "Germany",
+    "city": "Heidelberg",
+    "score": 87,
+    "academicReputation": 95.4,
+    "citationsPerPaper": 90,
+    "papersPerFaculty": 32.9
+  },
+  {
+    "rank": 18,
+    "name": "University of Birmingham",
+    "country": "United Kingdom",
+    "city": "Birmingham",
+    "score": 87,
+    "academicReputation": 91.7,
+    "citationsPerPaper": 84.8,
+    "papersPerFaculty": 41.4
+  },
+  {
+    "rank": 20,
+    "name": "University of Leeds",
+    "country": "United Kingdom",
+    "city": "Leeds",
+    "score": 86.9,
+    "academicReputation": 92.5,
+    "citationsPerPaper": 85.4,
+    "papersPerFaculty": 40.6
+  },
+  {
+    "rank": 21,
+    "name": "Ludwig-Maximilians-Universität München",
+    "country": "Germany",
+    "city": "Munich",
+    "score": 86.4,
+    "academicReputation": 99.4,
+    "citationsPerPaper": 73.9,
+    "papersPerFaculty": 53.7
+  },
+  {
+    "rank": 22,
+    "name": "The University of Warwick",
+    "country": "United Kingdom",
+    "city": "Coventry",
+    "score": 86.1,
+    "academicReputation": 93.4,
+    "citationsPerPaper": 68,
+    "papersPerFaculty": 44.9
+  },
+  {
+    "rank": 23,
+    "name": "Institut Polytechnique de Paris",
+    "country": "France",
+    "city": "Paris",
+    "score": 85,
+    "academicReputation": 72.8,
+    "citationsPerPaper": 30.6,
+    "papersPerFaculty": 95.3
+  },
+  {
+    "rank": 24,
+    "name": "University of Nottingham",
+    "country": "United Kingdom",
+    "city": "Nottingham",
+    "score": 83.8,
+    "academicReputation": 86.9,
+    "citationsPerPaper": 84.8,
+    "papersPerFaculty": 39.1
+  },
+  {
+    "rank": 25,
+    "name": "Uppsala University",
+    "country": "Sweden",
+    "city": "Uppsala",
+    "score": 83.5,
+    "academicReputation": 87.1,
+    "citationsPerPaper": 65.8,
+    "papersPerFaculty": 49.9
+  },
+  {
+    "rank": 26,
+    "name": "Trinity College Dublin, The University of Dublin",
+    "country": "Ireland",
+    "city": "Dublin",
+    "score": 83.4,
+    "academicReputation": 92,
+    "citationsPerPaper": 71.6,
+    "papersPerFaculty": 61.8
+  },
+  {
+    "rank": 27,
+    "name": "KTH Royal Institute of Technology",
+    "country": "Sweden",
+    "city": "Stockholm",
+    "score": 83.3,
+    "academicReputation": 73.3,
+    "citationsPerPaper": 77.5,
+    "papersPerFaculty": 83.2
+  },
+  {
+    "rank": 27,
+    "name": "KU Leuven",
+    "country": "Belgium",
+    "city": "Leuven",
+    "score": 83.3,
+    "academicReputation": 97.9,
+    "citationsPerPaper": 78.6,
+    "papersPerFaculty": 87.5
+  },
+  {
+    "rank": 29,
+    "name": "The University of Sheffield",
+    "country": "United Kingdom",
+    "city": "Sheffield",
+    "score": 83.1,
+    "academicReputation": 84.9,
+    "citationsPerPaper": 96.5,
+    "papersPerFaculty": 37.2
+  },
+  {
+    "rank": 30,
+    "name": "Université Paris-Saclay",
+    "country": "France",
+    "city": "Paris",
+    "score": 82.6,
+    "academicReputation": 87.1,
+    "citationsPerPaper": 50.8,
+    "papersPerFaculty": 45.9
+  }
+]
