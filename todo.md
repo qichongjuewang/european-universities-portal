@@ -161,3 +161,18 @@
 - [x] 执行批量数据导入
 - [x] 验证数据完整性和准确性
 - [x] 清理重复数据
+
+## 全面排名数据爬取
+- [ ] 爬取QS综合排名所有欧洲大学
+- [ ] 爬取QS各学科排名（医学、工程、商科等）
+- [ ] 爬取Times Higher Education综合排名
+- [ ] 爬取Times各学科排名
+- [ ] 爬取ARWU综合排名
+- [ ] 爬取ARWU各学科排名
+- [ ] 爬取Shanghai Rankings其他专科排名
+- [ ] 爬取Academic Ranking of World Universities by Subject
+- [ ] 爬取Nature Index排名
+- [ ] 爬取其他权威排名（如CWUR、Webometrics等）
+- [ ] 实现排名数据的去重和合并
+- [ ] 建立排名数据更新机制
+- [ ] 验证爬取数据的准确性
