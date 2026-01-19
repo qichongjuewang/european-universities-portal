@@ -1,0 +1,27 @@
+{
+  "universities": [
+    {"rank": 2, "name": "University of Cambridge", "country": "United Kingdom", "city": "Cambridge", "qsRank": 2, "type": "public"},
+    {"rank": 3, "name": "University of Oxford", "country": "United Kingdom", "city": "Oxford", "qsRank": 3, "type": "public"},
+    {"rank": 6, "name": "Imperial College London", "country": "United Kingdom", "city": "London", "qsRank": 6, "type": "public"},
+    {"rank": 7, "name": "ETH Zurich", "country": "Switzerland", "city": "Zurich", "qsRank": 7, "type": "public"},
+    {"rank": 9, "name": "University College London", "country": "United Kingdom", "city": "London", "qsRank": 9, "type": "public"},
+    {"rank": 22, "name": "University of Edinburgh", "country": "United Kingdom", "city": "Edinburgh", "qsRank": 22, "type": "public"},
+    {"rank": 24, "name": "PSL Research University Paris", "country": "France", "city": "Paris", "qsRank": 24, "type": "public"},
+    {"rank": 32, "name": "University of Manchester", "country": "United Kingdom", "city": "Manchester", "qsRank": 32, "type": "public"},
+    {"rank": 36, "name": "EPFL", "country": "Switzerland", "city": "Lausanne", "qsRank": 36, "type": "public"},
+    {"rank": 37, "name": "Technical University of Munich", "country": "Germany", "city": "Munich", "qsRank": 37, "type": "public"},
+    {"rank": 38, "name": "Institut Polytechnique de Paris", "country": "France", "city": "Paris", "qsRank": 38, "type": "public"},
+    {"rank": 40, "name": "King's College London", "country": "United Kingdom", "city": "London", "qsRank": 40, "type": "public"},
+    {"rank": 45, "name": "London School of Economics", "country": "United Kingdom", "city": "London", "qsRank": 45, "type": "public"},
+    {"rank": 47, "name": "Delft University of Technology", "country": "Netherlands", "city": "Delft", "qsRank": 47, "type": "public"},
+    {"rank": 53, "name": "University of Amsterdam", "country": "Netherlands", "city": "Amsterdam", "qsRank": 53, "type": "public"},
+    {"rank": 54, "name": "Ludwig Maximilian University of Munich", "country": "Germany", "city": "Munich", "qsRank": 54, "type": "public"},
+    {"rank": 55, "name": "University of Bristol", "country": "United Kingdom", "city": "Bristol", "qsRank": 55, "type": "public"},
+    {"rank": 59, "name": "Sorbonne University", "country": "France", "city": "Paris", "qsRank": 59, "type": "public"},
+    {"rank": 61, "name": "KU Leuven", "country": "Belgium", "city": "Leuven", "qsRank": 61, "type": "public"},
+    {"rank": 67, "name": "University of Warwick", "country": "United Kingdom", "city": "Coventry", "qsRank": 67, "type": "public"}
+  ],
+  "total": 200,
+  "source": "QS World University Rankings 2024",
+  "last_updated": "2024-01-19"
+}
