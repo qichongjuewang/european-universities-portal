@@ -1,0 +1,31 @@
+{
+  "query": "SELECT COUNT(*) as university_count FROM universities;\nSELECT COUNT(*) as program_count FROM programs;\nSELECT COUNT(*) as country_count FROM countries;\nSELECT COUNT(*) as city_count FROM cities;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user RiEPScXNbyHT7NE.root --database kfbZCXQxSRhA8uTcZTmQUM --execute SELECT COUNT(*) as university_count FROM universities;\nSELECT COUNT(*) as program_count FROM programs;\nSELECT COUNT(*) as country_count FROM countries;\nSELECT COUNT(*) as city_count FROM cities;",
+  "rows": [
+    {
+      "university_count": "80"
+    },
+    {
+      "university_count": "program_count"
+    },
+    {
+      "university_count": "14"
+    },
+    {
+      "university_count": "country_count"
+    },
+    {
+      "university_count": "20"
+    },
+    {
+      "university_count": "city_count"
+    },
+    {
+      "university_count": "88"
+    }
+  ],
+  "messages": [],
+  "stdout": "university_count\n80\nprogram_count\n14\ncountry_count\n20\ncity_count\n88\n",
+  "stderr": "",
+  "execution_time_ms": 2196
+}
