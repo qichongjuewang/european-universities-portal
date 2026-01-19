@@ -191,7 +191,7 @@ export async function getProgramsByFilters(filters: {
   offset?: number;
 }) {
   const db = await getDb();
-  if (!db) return [];
+  if (!db) return { programs: [], total: 0 };
 
   const conditions: any[] = [];
 
@@ -219,10 +219,44 @@ export async function getProgramsByFilters(filters: {
     );
   }
 
-  let query: any = db.select().from(programs);
+  // Build base query with JOINs to get university and city names
+  let query: any = db
+    .select({
+      id: programs.id,
+      nameCn: programs.nameCn,
+      nameEn: programs.nameEn,
+      degreeType: programs.degreeType,
+      universityType: programs.universityType,
+      durationMonths: programs.durationMonths,
+      teachingLanguage: programs.teachingLanguage,
+      universityId: programs.universityId,
+      cityId: programs.cityId,
+      iscedDetailedFieldId: programs.iscedDetailedFieldId,
+      universityName: universities.nameCn,
+      countryName: countries.nameCn,
+      cityName: cities.nameCn,
+      tuition: tuitionFees.annualFeeAmount,
+    })
+    .from(programs)
+    .leftJoin(universities, eq(programs.universityId, universities.id))
+    .leftJoin(cities, eq(programs.cityId, cities.id))
+    .leftJoin(countries, eq(cities.countryId, countries.id))
+    .leftJoin(tuitionFees, eq(programs.id, tuitionFees.programId));
 
   if (conditions.length > 0) {
     query = query.where(and(...conditions));
+  }
+
+  // Get total count
+  let countQuery: any = db
+    .select()
+    .from(programs)
+    .leftJoin(universities, eq(programs.universityId, universities.id))
+    .leftJoin(cities, eq(programs.cityId, cities.id))
+    .leftJoin(countries, eq(cities.countryId, countries.id));
+
+  if (conditions.length > 0) {
+    countQuery = countQuery.where(and(...conditions));
   }
 
   if (filters.limit) {
@@ -233,7 +267,15 @@ export async function getProgramsByFilters(filters: {
     query = query.offset(filters.offset);
   }
 
-  return query;
+  const [programResults, countResults] = await Promise.all([
+    query,
+    countQuery
+  ]);
+
+  return {
+    programs: programResults,
+    total: countResults.length
+  };
 }
 
 export async function getProgramById(id: number) {
